@@ -3,10 +3,11 @@
 #
 #
 # Daniel Albach
+#@time begin
 
 #using section
 using ProgressMeter
-
+p=Progress(steps_crystal, dt=1.0, color=:grey)
 # fundamental constants
 include("const.jl")
 
@@ -14,7 +15,10 @@ include("const.jl")
 include("functions.jl")
 
 #println("constant speed of light $c_light")
-@showprogress 1 "Computing..." for i in 1:50
-    sleep(0.1)
+#@showprogress 1 "Computing..."
+for i in 1:steps_crystal
+    sleep(0.01)
+    ProgressMeter.next!(p)
 end
-println("Hello")
+
+#end
