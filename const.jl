@@ -9,19 +9,30 @@ nm = 1e-9
 c_0 = 299792458 # speed of light in vacuum [m/s]
 h = 6.626e-34  # Planck constant [Js]
 
+#constants for the calculation
+steps_time = 1000
+steps_crystal = 1000
+
 #include here some material constants, mainly for comparison
 
-#Yb:YAG
-N1per = 1.388e20
-
 #structs to contain data
-
-struct crystal
+#now make the structs using the abstract types
+struct material
     #content
-    length
+    Length::Float32
+    Wavelength::Array{Float32}
+    σ_abs::Array{Float32}
+    σ_em::Array{Float32}
+    τ_fluo::Float32
+    N1per::Float32
+    Doping::Float32
+    N_gradient::Array{Float32}
 end
 
 struct laserparameters
-    #content of the different lasers for pump and extraction
-    wavelength
+    #parameter of the potential laser
+    Wavelength::Array{Float32}
+    Intensity_spectral::Array{Float32}
+    Time::Array{Float32}
+    Intensity_temporal::Array{Float32}
 end
