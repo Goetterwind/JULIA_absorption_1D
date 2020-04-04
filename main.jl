@@ -7,18 +7,26 @@
 
 #using section
 using ProgressMeter
-p=Progress(steps_crystal, dt=1.0, color=:grey)
+
 # fundamental constants
 include("const.jl")
-
 # necessary functions
 include("functions.jl")
 
 #println("constant speed of light $c_light")
 #@showprogress 1 "Computing..."
-for i in 1:steps_crystal
-    sleep(0.01)
-    ProgressMeter.next!(p)
-end
+#scope is a bit of a pain - use let end or define as globals
+#let
+    #ProgreeMeter call
+    p=Progress(steps_crystal, dt=1.0, color=:grey)
 
+    a=0
+    b=0
+
+    for i in 1:steps_crystal
+        #sleep(0.1)
+        a,b = test_function(i,steps_crystal)
+        ProgressMeter.next!(p)
+    end
+    println(a);
 #end
