@@ -17,7 +17,7 @@ include("functions.jl")
 #@showprogress 1 "Computing..."
 #scope is a bit of a pain - use let end or define as globals
 #let
-    #ProgreeMeter call
+    #ProgreesMeter call
     p=Progress(steps_crystal, dt=1.0, color=:grey)
 
     a=0
@@ -25,6 +25,8 @@ include("functions.jl")
 
     for i in 1:steps_crystal
         #sleep(0.1)
+        global a
+        global b
         a,b = test_function(i,steps_crystal)
         ProgressMeter.next!(p)
     end

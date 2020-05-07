@@ -17,22 +17,31 @@ steps_crystal = 1000
 
 #structs to contain data
 #now make the structs using the abstract types
+
+# how to use struct xxx -> t = xxx ()...
 struct material
     #content
-    Length::Float32
-    Wavelength::Array{Float32}
-    σ_abs::Array{Float32}
-    σ_em::Array{Float32}
-    τ_fluo::Float32
-    N1per::Float32
-    Doping::Float32
-    N_gradient::Array{Float32}
+    Length::Float64
+    Wavelength::Array{Float64}
+    σ_abs::Array{Float64}
+    σ_em::Array{Float64}
+    τ_fluo::Float64
+    N1per::Float64
+    Doping::Float64
+    N_gradient::Array{Float64}
 end
 
 struct laserparameters
     #parameter of the potential laser
-    Wavelength::Array{Float32}
-    Intensity_spectral::Array{Float32}
-    Time::Array{Float32}
-    Intensity_temporal::Array{Float32}
+    Wavelength::Array{Float64}
+    Intensity_spectral::Array{Float64}
+    Time::Array{Float64}
+    Intensity_temporal::Array{Float64}
+end
+
+mutable struct ray_ABCD
+    A::Complex{Float64}
+    B::Complex{Float64}
+    C::Complex{Float64}
+    D::Complex{Float64}
 end
