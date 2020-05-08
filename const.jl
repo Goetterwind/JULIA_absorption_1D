@@ -31,6 +31,7 @@ struct material
     N_gradient::Array{Float64}
 end
 
+# generate a new struct for the individual output after manipulation
 struct laserparameters
     #parameter of the potential laser
     Wavelength::Array{Float64}
@@ -39,6 +40,7 @@ struct laserparameters
     Intensity_temporal::Array{Float64}
 end
 
+#  speed increase by generating new rays
 mutable struct ray_ABCD
     A::Complex{Float64}
     B::Complex{Float64}
