@@ -7,11 +7,32 @@
 
 #using section
 using ProgressMeter
+using DelimitedFiles
+using Plots
 
 # fundamental constants
 include("const.jl")
 # necessary functions
 include("functions.jl")
+
+#load cross sections, otherwise use the const.jl values, which are an array as well
+#loading using readdlm out of DelimitedFiles
+
+#read the absorption data
+filename = "JK_CaF300Ka.txt"
+subpath = "original_code"
+filepath = joinpath(@__DIR__,subpath,filename)
+
+spectra_abs = readdlm(filepath)
+
+#read the fluorescence data
+filename = "JK_CaF300Kf.txt"
+subpath = "original_code"
+filepath = joinpath(@__DIR__,subpath,filename)
+
+spectra_flu = readdlm(filepath)
+
+
 
 #println("constant speed of light $c_light")
 #@showprogress 1 "Computing..."
