@@ -32,8 +32,6 @@ filepath = joinpath(@__DIR__,subpath,filename)
 
 spectra_flu = readdlm(filepath)
 
-
-
 #println("constant speed of light $c_light")
 #@showprogress 1 "Computing..."
 #scope is a bit of a pain - use let end or define as globals

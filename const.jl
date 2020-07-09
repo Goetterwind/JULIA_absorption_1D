@@ -10,8 +10,12 @@ c_0 = 299792458 # speed of light in vacuum [m/s]
 h = 6.626e-34  # Planck constant [Js]
 
 #constants for the calculation
-steps_time = 1000
-steps_crystal = 1000
+steps_time = 100
+steps_crystal = 100
+
+#spectral limits
+λ_s = 900 * nm
+λ_e = 1100 * nm
 
 #include here some material constants, mainly for comparison
 
