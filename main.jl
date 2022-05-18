@@ -37,7 +37,7 @@ spectra_flu = readdlm(filepath)
 #scope is a bit of a pain - use let end or define as globals
 #let
     #ProgreesMeter call
-    p=Progress(steps_crystal, dt=1.0, color=:grey)
+    p=Progress(steps_crystal, dt=0.05, color=:grey)
 
     a=0
     b=0

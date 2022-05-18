@@ -27,7 +27,7 @@ function generate_ray(args)
     body
 end
 
-function β_int
+function β_int(args)
     #this is a copy of the old Matlab version of the estimation of β
 
 end
