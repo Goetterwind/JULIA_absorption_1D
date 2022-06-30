@@ -13,18 +13,18 @@ end
 # output are the rays as vectors
 # in case of an incoherent source MLA, it is just the MLA property and Fourier lens
 function reverse_3D_tracing(args)
-    body
+    # body
 end
 
 # Gaussian ABCD propagation including the new distribution and the phase of the center beam
 # a good test would be to get a Poissons spot example for diffraction
 function gaussian_prop_ABCD(args)
-    body
+    # body
 end
 
 # this function generates a ray (either geometric or Gaussian)
 function generate_ray(args)
-    body
+    # body
 end
 
 function β_int(args)

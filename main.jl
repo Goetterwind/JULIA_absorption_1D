@@ -23,14 +23,14 @@ filename = "JK_CaF300Ka.txt"
 subpath = "original_code"
 filepath = joinpath(@__DIR__,subpath,filename)
 
-spectra_abs = readdlm(filepath)
+# spectra_abs = readdlm(filepath)
 
 #read the fluorescence data
 filename = "JK_CaF300Kf.txt"
 subpath = "original_code"
 filepath = joinpath(@__DIR__,subpath,filename)
 
-spectra_flu = readdlm(filepath)
+# spectra_flu = readdlm(filepath)
 
 #println("constant speed of light $c_light")
 #@showprogress 1 "Computing..."
@@ -48,6 +48,7 @@ spectra_flu = readdlm(filepath)
         global b
         a,b = test_function(i,steps_crystal)
         ProgressMeter.next!(p)
+        sleep(0.1)
     end
     println(a);
 #end
