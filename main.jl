@@ -9,6 +9,7 @@
 using ProgressMeter
 using DelimitedFiles
 using Plots
+using Interpolations
 
 # fundamental constants
 include("const.jl")
@@ -23,14 +24,24 @@ filename = "JK_CaF300Ka.txt"
 subpath = "original_code"
 filepath = joinpath(@__DIR__,subpath,filename)
 
-# spectra_abs = readdlm(filepath)
+spectra_abs = readdlm(filepath)
+
+# clear the NaNs that are potentially hidden inside the spectrum
+spectra_abs[:,2] = replace!(spectra_abs[:,2], NaN => 0)
 
 #read the fluorescence data
 filename = "JK_CaF300Kf.txt"
 subpath = "original_code"
 filepath = joinpath(@__DIR__,subpath,filename)
 
-# spectra_flu = readdlm(filepath)
+spectra_flu = readdlm(filepath)
+
+# clear the NaNs that are potentially hidden inside the spectrum
+spectra_flu[:,2] = replace!(spectra_flu[:,2], NaN => 0)
+
+# now make a nice plot of the spectra overlaying each other
+plot(spectra_abs[:,1],spectra_abs[:,2], ylims=(0,1e-20))
+plot!(spectra_flu[:,1],spectra_flu[:,2], ylims=(0,1e-20))
 
 #println("constant speed of light $c_light")
 #@showprogress 1 "Computing..."
@@ -48,7 +59,7 @@ filepath = joinpath(@__DIR__,subpath,filename)
         global b
         a,b = test_function(i,steps_crystal)
         ProgressMeter.next!(p)
-        sleep(0.1)
+        # sleep(0.1)
     end
     println(a);
 #end
