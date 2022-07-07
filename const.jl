@@ -16,9 +16,11 @@ steps_crystal = 100
 #spectral limits
 λ_s = 900 * nm
 λ_e = 1100 * nm
+Δλ = 1 *nm
 
 #wavelength Array
-λ_array = LinRange(λ_s, λ_e, 201)
+# λ_array = LinRange(λ_s, λ_e, 201)
+λ_array = λ_s: Δλ :λ_e
 
 #include here some material constants, mainly for comparison
 
