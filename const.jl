@@ -28,7 +28,7 @@ steps_crystal = 100
 #now make the structs using the abstract types
 
 # how to use struct xxx -> t = xxx ()...
-struct material
+struct Material
     #content
     Length::Float64
     Wavelength::Array{Float64}
@@ -41,7 +41,7 @@ struct material
 end
 
 # generate a new struct for the individual output after manipulation
-struct laserparameters
+struct Laserparameters
     #parameter of the potential laser
     Wavelength::Array{Float64}
     Intensity_spectral::Array{Float64}
@@ -50,7 +50,7 @@ struct laserparameters
 end
 
 #  speed increase by generating new rays
-mutable struct ray_ABCD
+mutable struct Ray_ABCD
     A::Complex{Float64}
     B::Complex{Float64}
     C::Complex{Float64}
