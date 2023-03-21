@@ -54,18 +54,22 @@ plot!(spectra_flu[:,1],spectra_flu[:,2], ylims=(0,1e-20))
 #scope is a bit of a pain - use let end or define as globals
 #let
     #ProgreesMeter call
-    # p=Progress(steps_crystal, dt=0.05, color=:grey)
+    p=Progress(steps_crystal, dt=0.05, color=:grey)
 
-    a=0
-    b=0
+    a=10
+    b=20
 
-    @progress for i in 1:steps_crystal
-        #sleep(0.1)
-        global a
-        global b
+    #= @progress for i in 1:steps_crystal
+        # sleep(0.005)
         a,b = test_function(i,steps_crystal)
-        # ProgressMeter.next!(p)
-        sleep(0.02)
-    end
+        ProgressMeter.next!(p)
+        # sleep(0.005)
+    end =#
+
     println(a);
+    println(b);
+    
+    p,a,b = iter(p,a,b)
+    println(a);
+    println(b);
 #end

@@ -1,17 +1,17 @@
 #this file houses the constants used in the calculations
 
 #conversion of dimensions
-cm = 0.01
-nm = 1e-9
-μm = 1e-6
+const cm = 0.01
+const nm = 1e-9
+const μm = 1e-6
 
 #some fundamental constants
-c_0 = 299792458 # speed of light in vacuum [m/s]
-h = 6.626e-34  # Planck constant [Js]
+const c_0 = 299792458 # speed of light in vacuum [m/s]
+const h = 6.626e-34  # Planck constant [Js]
 
 #constants for the calculation
-steps_time = 100
-steps_crystal = 100
+const steps_time = 100
+const steps_crystal = 100
 
 #spectral limits
 λ_s = 900 * nm
