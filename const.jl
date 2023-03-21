@@ -10,8 +10,8 @@ const c_0 = 299792458 # speed of light in vacuum [m/s]
 const h = 6.626e-34  # Planck constant [Js]
 
 #constants for the calculation
-const steps_time = 100
-const steps_crystal = 100
+steps_time = 100
+steps_crystal = 100
 
 #spectral limits
 λ_s = 900 * nm
@@ -27,6 +27,8 @@ const steps_crystal = 100
 #structs to contain data
 #now make the structs using the abstract types
 
+# mutable structs are slower!
+
 # how to use struct xxx -> t = xxx ()...
 struct Material
     #content
@@ -41,7 +43,7 @@ struct Material
 end
 
 # generate a new struct for the individual output after manipulation
-struct Laserparameters
+mutable struct Laserparameters
     #parameter of the potential laser
     Wavelength::Array{Float64}
     Intensity_spectral::Array{Float64}

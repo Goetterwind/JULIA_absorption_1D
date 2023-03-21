@@ -43,8 +43,10 @@ spectra_flu[:,2] = replace!(spectra_flu[:,2], NaN => 0)
 spectra_flu_ip = interpolate((spectra_flu[:,1],), spectra_flu[:,2], Gridded(Linear()))
 
 # now make a nice plot of the spectra overlaying each other
-plot(spectra_abs[:,1],spectra_abs[:,2], ylims=(0,1e-20))
+pll = plot(spectra_abs[:,1],spectra_abs[:,2], ylims=(0,1e-20))
 plot!(spectra_flu[:,1],spectra_flu[:,2], ylims=(0,1e-20))
+
+# display(pll)
 
 # here the actual code starts
 # for sure some monochromatic one at first
@@ -73,3 +75,35 @@ plot!(spectra_flu[:,1],spectra_flu[:,2], ylims=(0,1e-20))
     println(a);
     println(b);
 #end
+
+# so do the monochromatic version first - generate a vector with zeroes for the beta-distribution
+β_vec = zeros(1,steps_crystal);
+β_inter = zeros(1,steps_crystal-1);
+
+# define the cross sections for now
+σ_ap = 0.7e-20; #cm^-2
+σ_ep = 0.22e-20; #cm^-2
+
+# material size etc.
+crys_l = 0.7; #cm
+crys_d = 2 * 1.388e20;
+
+crys_step = crys_l /(steps_crystal-1);
+
+# now do a constant pump intensity for the sake of simplicity, which will be the later time dependent
+I_pump = 16e3; # W/cm^2
+τ_p =0.94e-3; # s
+
+# this is the initial pump intensity vector along the crystal axis
+pump_vec = ones(1,steps_crystal);
+pump_vec[1] = I_pump;
+
+# later add the pump recycling and the multipump version, for now a simple onesided, no gradient of the doping yet
+for icrys in 1:steps_crystal-1
+    # in order to estimate the absorption factor, we have the classic fence problem
+    # interpolate fromt the former the initial distribution the new β ;)
+    local β_inter = (β_vec[icrys] + β_vec[icrys+1])/2;
+    pump_vec[icrys+1] = pump_vec[icrys] * exp( -(σ_ap-β_inter*(σ_ap+σ_ep))*crys_d*crys_step);
+end
+
+display(plot(pump_vec[1,:]))

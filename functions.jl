@@ -35,8 +35,6 @@ end
 function iter(p,a,b)
     @progress for i in 1:steps_crystal
         # sleep(0.005)
-        # global a
-        # global b
         a,b = test_function(i,steps_crystal)
         ProgressMeter.next!(p)
     end
