@@ -17,6 +17,7 @@ steps_crystal = 100
 λ_s = 900 * nm
 λ_e = 1100 * nm
 Δλ = 1 *nm
+λ_p = 940 *nm
 
 #wavelength Array
 # λ_array = LinRange(λ_s, λ_e, 201)
