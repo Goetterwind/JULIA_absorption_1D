@@ -100,31 +100,35 @@ pump_dur = 1e-3;
 
 # this is the initial pump intensity vector along the crystal axis
 pump_vec = ones(1,steps_crystal);
-pump_vec[1] = I_pump;
 
-# later add the pump recycling and the multipump version, for now a simple onesided, no gradient of the doping yet
-for icrys in 1:steps_crystal-1
-    # in order to estimate the absorption factor, we have the classic fence problem
-    # interpolate fromt the former the initial distribution the new β ;)
-    local β_inter = (β_vec[icrys] + β_vec[icrys+1])/2;
-    pump_vec[icrys+1] = pump_vec[icrys] * exp( -(σ_ap-β_inter*(σ_ap+σ_ep))*crys_d*crys_step);
+for itime in 1:steps_time
+    pump_vec[1] = I_pump;
+
+    # later add the pump recycling and the multipump version, for now a simple onesided, no gradient of the doping yet
+    for icrys in 1:steps_crystal-1
+        # in order to estimate the absorption factor, we have the classic fence problem
+        # interpolate fromt the former the initial distribution the new β ;)
+        local β_inter = (β_vec[icrys] + β_vec[icrys+1])/2;
+        pump_vec[icrys+1] = pump_vec[icrys] * exp( -(σ_ap-β_inter*(σ_ap+σ_ep))*crys_d*crys_step);
+    end
+
+    # display(plot(pump_vec[1,:]))
+
+    # now we can integrate to get the new β distribution using the differential equation, explicit solution of the diffeq
+    local A1vec = σ_ap.*pump_vec./(h*c_0/λ_p);
+    local C1vec = (σ_ap+σ_ep).*pump_vec./(h*c_0/λ_p).+1/τ_fluo;
+    global β_vec = A1vec./C1vec .* (1 .-exp.(-C1vec.*δt)) .+ β_vec.*exp.(-C1vec.*δt);
+
+    # the very same can be done in a relatively longer version
+    #= for ibeta in 1:steps_crystal
+        # A1 = σ_ap*pump_vec[ibeta]/(h*c_0/λ_p);
+        # C1 = (σ_ap+σ_ep)*pump_vec[ibeta]/(h*c_0/λ_p)+1/τ_fluo;
+        A1 = A1vec[ibeta];
+        C1 = C1vec[ibeta]
+        β_vec[ibeta] = A1/C1 * (1-exp(-C1*δt)) + β_vec[ibeta]*exp(-C1*δt);
+    end =#
+
+    # display(plot(β_vec[1,:]))
 end
 
-# display(plot(pump_vec[1,:]))
-
-# now we can integrate to get the new β distribution using the differential equation, explicit solution of the diffeq
-A1vec = σ_ap.*pump_vec./(h*c_0/λ_p);
-C1vec = (σ_ap+σ_ep).*pump_vec./(h*c_0/λ_p).+1/τ_fluo;
-β_vec = A1vec./C1vec .* (1 .-exp.(-C1vec.*δt)) .+ β_vec.*exp.(-C1vec.*δt);
-
-# the very same can be done in a relatively longer version
-#= for ibeta in 1:steps_crystal
-    # A1 = σ_ap*pump_vec[ibeta]/(h*c_0/λ_p);
-    # C1 = (σ_ap+σ_ep)*pump_vec[ibeta]/(h*c_0/λ_p)+1/τ_fluo;
-    A1 = A1vec[ibeta];
-    C1 = C1vec[ibeta]
-    β_vec[ibeta] = A1/C1 * (1-exp(-C1*δt)) + β_vec[ibeta]*exp(-C1*δt);
-end =#
-
-# display(plot(β_vec[1,:]))
-
+display(plot(β_vec[1,:]))
