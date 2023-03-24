@@ -101,13 +101,20 @@ pump_dur = 1e-3;
 # this is the initial pump intensity vector along the crystal axis
 pump_vec = ones(1,steps_crystal);
 
-for itime in 1:steps_time
-    pump_vec[1] = I_pump;
+# how to define the brm and the multiple pumps?
+# directions are indicated by the sign [], the '0' would ignore it in case
 
+I_pv = [1 -1] #brm basically
+
+for itime in 1:steps_time
     # later add the pump recycling and the multipump version, for now a simple onesided, no gradient of the doping yet
+    # we now have to go through the size of the I_pv in its two dimensions
+    # flip the arrays using 'reverse'?
+    pump_vec[1] = I_pump;
     for icrys in 1:steps_crystal-1
         # in order to estimate the absorption factor, we have the classic fence problem
         # interpolate fromt the former the initial distribution the new β ;)
+        # crys_d later has to be changed to a vector for the doping concentration
         local β_inter = (β_vec[icrys] + β_vec[icrys+1])/2;
         pump_vec[icrys+1] = pump_vec[icrys] * exp( -(σ_ap-β_inter*(σ_ap+σ_ep))*crys_d*crys_step);
     end
