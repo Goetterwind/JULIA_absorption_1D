@@ -42,21 +42,25 @@ function iter(p,a,b)
 end
 
 function get_pump_vec(pump_vec,β_vec,p_dir)
-    if p_dir > 0
+    if p_dir == 1
         #do the pos
         pump_vec = do_pump_vec(pump_vec,β_vec);
-    elseif p_dir < 0
+        pump_ret = pump_vec[steps_crystal];
+    elseif p_dir == -1
         #do the neg
         # pump_vec = reverse(pump_vec);
         β_vec = reverse(β_vec);
-        pump_vec = reverse(do_pump_vec(pump_vec,β_vec));
+        pump_vec = do_pump_vec(pump_vec,β_vec);
+        pump_ret = pump_vec[steps_crystal];
+        pump_vec = reverse(pump_vec);
     else
         #this is 0 case
         # do nothing and return the '0-vector'
-        pump_vec[1]=0;
+        pump_vec = zeros(1,steps_crystal);
+        pump_ret = 0;
     end
-
-    return pump_vec
+    # println(pump_ret);
+    return pump_vec, pump_ret
 end
 
 function do_pump_vec(pump_vec,β_vec)

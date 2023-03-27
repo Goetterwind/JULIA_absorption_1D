@@ -10,7 +10,7 @@ const c_0 = 299792458 # speed of light in vacuum [m/s]
 const h = 6.626e-34  # Planck constant [Js]
 
 #constants for the calculation
-steps_time = 100
+steps_time = 300
 steps_crystal = 100
 
 #spectral limits

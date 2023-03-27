@@ -101,7 +101,7 @@ pump_dur = 1e-3;
 # how to define the brm and the multiple pumps?
 # directions are indicated by the sign [], the '0' would ignore it in case
 
-I_pv = [1 1 0] #brm basically
+I_pv = [1 -1] #brm basically
 
 # this is the initial pump intensity vector along the crystal axis
 pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
@@ -117,23 +117,29 @@ for itime in 1:steps_time
     for ip in 1:size(I_pv,1)
         pump_vec[1,1] = I_pump[ip];
         for ir in 1:size(I_pv,2)
-            global pump_vec[size(I_pv,2)*(ip-1)+ir,:] = get_pump_vec(pump_vec[size(I_pv,2)*(ip-1)+ir,:],β_vec,I_pv[ip,ir])
+            pump_vec2 = pump_vec[size(I_pv,2)*(ip-1)+ir,:];
+            pump_vec[size(I_pv,2)*(ip-1)+ir,:], pump_ret = get_pump_vec(pump_vec2,β_vec,I_pv[ip,ir])
             if ir == size(I_pv,2)
                 continue
             end
-            if I_pv[ip,ir] > 0
-                pump_vec[size(I_pv,2)*(ip-1)+ir+1,1]=pump_vec[size(I_pv,2)*(ip-1)+ir,end];
-            else
-                pump_vec[size(I_pv,2)*(ip-1)+ir+1,1]=pump_vec[size(I_pv,2)*(ip-1)+ir,:1];
+            
+            if I_pv[ip,ir] == 1
+                pump_vec[size(I_pv,2)*(ip-1)+ir+1,1]=pump_ret;
+            elseif I_pv[ip,ir] == -1
+                pump_vec[size(I_pv,2)*(ip-1)+ir+1,1]=pump_ret;
+            elseif I_pv[ip,ir] == 0
+                pump_vec[size(I_pv,2)*(ip-1)+ir+1,1]=0;
             end
         end
     end
 
+    pump_v = sum(pump_vec, dims=1);
+
     # display(plot(pump_vec[1,:]))
 
     # now we can integrate to get the new β distribution using the differential equation, explicit solution of the diffeq
-    local A1vec = σ_ap.*pump_vec./(h*c_0/λ_p);
-    local C1vec = (σ_ap+σ_ep).*pump_vec./(h*c_0/λ_p).+1/τ_fluo;
+    local A1vec = σ_ap.*pump_v./(h*c_0/λ_p);
+    local C1vec = (σ_ap+σ_ep).*pump_v./(h*c_0/λ_p).+1/τ_fluo;
     global β_vec = A1vec./C1vec .* (1 .-exp.(-C1vec.*δt)) .+ β_vec.*exp.(-C1vec.*δt);
 
     # the very same can be done in a relatively longer version
@@ -148,6 +154,4 @@ for itime in 1:steps_time
     # display(plot(β_vec[1,:]))
 end
 
-display(plot(β_vec[1,:]))
-plot!(β_vec[2,:])
-plot!(β_vec[3,:])
+display(plot(β_vec[1,:],ylimits=(0, 0.35)))
