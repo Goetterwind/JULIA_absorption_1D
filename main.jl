@@ -98,25 +98,35 @@ I_pump = 16e3; # W/cm^2
 pump_dur = 1e-3;
 δt = pump_dur / (steps_time-1);
 
-# this is the initial pump intensity vector along the crystal axis
-pump_vec = ones(1,steps_crystal);
-
 # how to define the brm and the multiple pumps?
 # directions are indicated by the sign [], the '0' would ignore it in case
 
-I_pv = [1 -1] #brm basically
+I_pv = [1 1 0] #brm basically
+
+# this is the initial pump intensity vector along the crystal axis
+pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
 
 for itime in 1:steps_time
     # later add the pump recycling and the multipump version, for now a simple onesided, no gradient of the doping yet
     # we now have to go through the size of the I_pv in its two dimensions
     # flip the arrays using 'reverse'?
-    pump_vec[1] = I_pump;
-    for icrys in 1:steps_crystal-1
-        # in order to estimate the absorption factor, we have the classic fence problem
-        # interpolate fromt the former the initial distribution the new β ;)
-        # crys_d later has to be changed to a vector for the doping concentration
-        local β_inter = (β_vec[icrys] + β_vec[icrys+1])/2;
-        pump_vec[icrys+1] = pump_vec[icrys] * exp( -(σ_ap-β_inter*(σ_ap+σ_ep))*crys_d*crys_step);
+
+    # size(I_pv,1) gives the amount of available pumps
+    # size(I_pv,2) gives the amount of rountrips
+    # you have to initialize the pump vector with 0's and give the first 
+    for ip in 1:size(I_pv,1)
+        pump_vec[1,1] = I_pump[ip];
+        for ir in 1:size(I_pv,2)
+            global pump_vec[size(I_pv,2)*(ip-1)+ir,:] = get_pump_vec(pump_vec[size(I_pv,2)*(ip-1)+ir,:],β_vec,I_pv[ip,ir])
+            if ir == size(I_pv,2)
+                continue
+            end
+            if I_pv[ip,ir] > 0
+                pump_vec[size(I_pv,2)*(ip-1)+ir+1,1]=pump_vec[size(I_pv,2)*(ip-1)+ir,end];
+            else
+                pump_vec[size(I_pv,2)*(ip-1)+ir+1,1]=pump_vec[size(I_pv,2)*(ip-1)+ir,:1];
+            end
+        end
     end
 
     # display(plot(pump_vec[1,:]))
@@ -139,3 +149,5 @@ for itime in 1:steps_time
 end
 
 display(plot(β_vec[1,:]))
+plot!(β_vec[2,:])
+plot!(β_vec[3,:])

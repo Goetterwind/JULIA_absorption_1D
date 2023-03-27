@@ -40,3 +40,32 @@ function iter(p,a,b)
     end
     return p,a,b
 end
+
+function get_pump_vec(pump_vec,β_vec,p_dir)
+    if p_dir > 0
+        #do the pos
+        pump_vec = do_pump_vec(pump_vec,β_vec);
+    elseif p_dir < 0
+        #do the neg
+        # pump_vec = reverse(pump_vec);
+        β_vec = reverse(β_vec);
+        pump_vec = reverse(do_pump_vec(pump_vec,β_vec));
+    else
+        #this is 0 case
+        # do nothing and return the '0-vector'
+        pump_vec[1]=0;
+    end
+
+    return pump_vec
+end
+
+function do_pump_vec(pump_vec,β_vec)
+    for icrys in 1:steps_crystal-1
+        # in order to estimate the absorption factor, we have the classic fence problem
+        # interpolate fromt the former the initial distribution the new β ;)
+        # crys_d later has to be changed to a vector for the doping concentration
+        local β_inter = (β_vec[icrys] + β_vec[icrys+1])/2;
+        pump_vec[icrys+1] = pump_vec[icrys] * exp( -(σ_ap-β_inter*(σ_ap+σ_ep))*crys_d*crys_step);
+    end
+    return pump_vec
+end
