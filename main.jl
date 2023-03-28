@@ -106,7 +106,16 @@ I_pv = [-1 1; 1 -1] #brm basically
 # this is the initial pump intensity vector along the crystal axis
 pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
 
-for itime in 1:steps_time
+
+# some tip for debugging: if steps_time ~= 1 then you will see saturation effects!
+
+# how to make this braod band? We basically have to add the spectral distribution beforehand and give it to the next
+# iteration instead of a single intensity value
+# better seperate the monochromatic from the polychromatic version!
+
+# What is still missing? We still need to itroduce the doping vector and reflectivities after each pass!
+
+@time for itime in 1:steps_time
     # later add the pump recycling and the multipump version, for now a simple onesided, no gradient of the doping yet
     # we now have to go through the size of the I_pv in its two dimensions
     # flip the arrays using 'reverse'?
