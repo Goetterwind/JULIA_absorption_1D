@@ -92,7 +92,7 @@ crys_d = 2 * 1.388e20;
 crys_step = crys_l /(steps_crystal-1);
 
 # now do a constant pump intensity for the sake of simplicity, which will be the later time dependent
-I_pump = 16e3; # W/cm^2
+I_pump = [10e3 10e3]; # W/cm^2
 τ_fluo =0.94e-3; # s
 
 pump_dur = 1e-3;
@@ -101,7 +101,7 @@ pump_dur = 1e-3;
 # how to define the brm and the multiple pumps?
 # directions are indicated by the sign [], the '0' would ignore it in case
 
-I_pv = [1 -1] #brm basically
+I_pv = [-1 1; 1 -1] #brm basically
 
 # this is the initial pump intensity vector along the crystal axis
 pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
@@ -115,20 +115,21 @@ for itime in 1:steps_time
     # size(I_pv,2) gives the amount of rountrips
     # you have to initialize the pump vector with 0's and give the first 
     for ip in 1:size(I_pv,1)
-        pump_vec[1,1] = I_pump[ip];
+        cind = size(I_pv,2)*(ip-1)+1;
+        pump_vec[cind,1] = I_pump[ip];
         for ir in 1:size(I_pv,2)
-            pump_vec2 = pump_vec[size(I_pv,2)*(ip-1)+ir,:];
-            pump_vec[size(I_pv,2)*(ip-1)+ir,:], pump_ret = get_pump_vec(pump_vec2,β_vec,I_pv[ip,ir])
+            cind = size(I_pv,2)*(ip-1)+ir;
+            global pump_vec[cind,:], pump_ret = get_pump_vec(pump_vec[cind,:],β_vec,I_pv[ip,ir])
             if ir == size(I_pv,2)
                 continue
             end
             
             if I_pv[ip,ir] == 1
-                pump_vec[size(I_pv,2)*(ip-1)+ir+1,1]=pump_ret;
+                pump_vec[cind+1,1]=pump_ret;
             elseif I_pv[ip,ir] == -1
-                pump_vec[size(I_pv,2)*(ip-1)+ir+1,1]=pump_ret;
+                pump_vec[cind+1,1]=pump_ret;
             elseif I_pv[ip,ir] == 0
-                pump_vec[size(I_pv,2)*(ip-1)+ir+1,1]=0;
+                pump_vec[cind+1,1]=0;
             end
         end
     end
@@ -154,4 +155,10 @@ for itime in 1:steps_time
     # display(plot(β_vec[1,:]))
 end
 
-display(plot(β_vec[1,:],ylimits=(0, 0.35)))
+display(plot(β_vec[1,:],ylimits=(0, 0.5)))
+
+#= fig = plot()
+for i in 1:size(pump_vec,1)
+    plot!(pump_vec[i,:], ylimits=(0, 16e3));
+end
+display(fig) =#

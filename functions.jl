@@ -41,26 +41,26 @@ function iter(p,a,b)
     return p,a,b
 end
 
-function get_pump_vec(pump_vec,β_vec,p_dir)
-    if p_dir == 1
+function get_pump_vec(pv,bv,pdir)
+    if pdir == 1
         #do the pos
-        pump_vec = do_pump_vec(pump_vec,β_vec);
-        pump_ret = pump_vec[steps_crystal];
-    elseif p_dir == -1
+        pv = do_pump_vec(pv,bv);
+        pump_ret = pv[steps_crystal];
+    elseif pdir == -1
         #do the neg
         # pump_vec = reverse(pump_vec);
-        β_vec = reverse(β_vec);
-        pump_vec = do_pump_vec(pump_vec,β_vec);
-        pump_ret = pump_vec[steps_crystal];
-        pump_vec = reverse(pump_vec);
+        bv = reverse(bv);
+        pv = do_pump_vec(pv,bv);
+        pump_ret = pv[steps_crystal];
+        pv = reverse(pv);
     else
         #this is 0 case
         # do nothing and return the '0-vector'
-        pump_vec = zeros(1,steps_crystal);
+        pv = zeros(1,steps_crystal);
         pump_ret = 0;
     end
     # println(pump_ret);
-    return pump_vec, pump_ret
+    return pv, pump_ret
 end
 
 function do_pump_vec(pump_vec,β_vec)
@@ -69,7 +69,7 @@ function do_pump_vec(pump_vec,β_vec)
         # interpolate fromt the former the initial distribution the new β ;)
         # crys_d later has to be changed to a vector for the doping concentration
         local β_inter = (β_vec[icrys] + β_vec[icrys+1])/2;
-        pump_vec[icrys+1] = pump_vec[icrys] * exp( -(σ_ap-β_inter*(σ_ap+σ_ep))*crys_d*crys_step);
+        local pump_vec[icrys+1] = pump_vec[icrys] * exp( -(σ_ap-β_inter*(σ_ap+σ_ep))*crys_d*crys_step);
     end
     return pump_vec
 end
