@@ -73,3 +73,14 @@ function do_pump_vec(pump_vec,β_vec)
     end
     return pump_vec
 end
+
+#= function pump_next(pump_vec, cind, I_pv, pump_ret)
+    if I_pv == 1
+        pump_vec[cind+1,1]=pump_ret;
+    elseif I_pv == -1
+        pump_vec[cind+1,1]=pump_ret;
+    elseif I_pv == 0
+        pump_vec[cind+1,1]=0;
+    end
+    return pump_vec
+end =#

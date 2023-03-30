@@ -6,12 +6,12 @@
 #@time begin
 
 #using section
-using ProgressMeter
-using ProgressLogging
+#using ProgressMeter
+#using ProgressLogging
 using DelimitedFiles
 using Plots
 using Interpolations
-using BenchmarkTools
+#using BenchmarkTools
 
 
 # fundamental constants and functions
@@ -124,6 +124,8 @@ pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
     # size(I_pv,1) gives the amount of available pumps
     # size(I_pv,2) gives the amount of rountrips
     # you have to initialize the pump vector with 0's and give the first 
+
+    # but this can be turned into a function call
     for ip in 1:size(I_pv,1)
         cind = size(I_pv,2)*(ip-1)+1;
         pump_vec[cind,1] = I_pump[ip];
@@ -134,8 +136,8 @@ pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
             if ir == size(I_pv,2)
                 continue
             end
-            # turn this into a function
-            if I_pv[ip,ir] == 1
+            # turning this into a function does not give any advantage
+             if I_pv[ip,ir] == 1
                 pump_vec[cind+1,1]=pump_ret;
             elseif I_pv[ip,ir] == -1
                 pump_vec[cind+1,1]=pump_ret;
@@ -150,8 +152,8 @@ pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
     # display(plot(pump_vec[1,:]))
 
     # now we can integrate to get the new β distribution using the differential equation, explicit solution of the diffeq
-    local A1vec = σ_ap.*pump_v./(h*c_0/λ_p);
-    local C1vec = (σ_ap+σ_ep).*pump_v./(h*c_0/λ_p).+1/τ_fluo;
+    A1vec = σ_ap.*pump_v./(h*c_0/λ_p);
+    C1vec = (σ_ap+σ_ep).*pump_v./(h*c_0/λ_p).+1/τ_fluo;
     global β_vec = A1vec./C1vec .* (1 .-exp.(-C1vec.*δt)) .+ β_vec.*exp.(-C1vec.*δt);
 
 
