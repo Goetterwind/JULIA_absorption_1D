@@ -78,6 +78,7 @@ plot!(spectra_flu[:,1],spectra_flu[:,2], ylims=(0,1e-20)) =#
 #end
 
 # so do the monochromatic version first - generate a vector with zeroes for the beta-distribution
+# it is not good practice to use a matrix as an array -> initialize as an array
 β_vec = zeros(1,steps_crystal);
 β_inter = zeros(1,steps_crystal-1);
 
@@ -128,11 +129,12 @@ pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
         pump_vec[cind,1] = I_pump[ip];
         for ir in 1:size(I_pv,2)
             cind = size(I_pv,2)*(ip-1)+ir;
+            # make a local variable or put this whole lopp straight into a function
             global pump_vec[cind,:], pump_ret = get_pump_vec(pump_vec[cind,:],β_vec,I_pv[ip,ir])
             if ir == size(I_pv,2)
                 continue
             end
-            
+            # turn this into a function
             if I_pv[ip,ir] == 1
                 pump_vec[cind+1,1]=pump_ret;
             elseif I_pv[ip,ir] == -1
@@ -151,6 +153,7 @@ pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
     local A1vec = σ_ap.*pump_v./(h*c_0/λ_p);
     local C1vec = (σ_ap+σ_ep).*pump_v./(h*c_0/λ_p).+1/τ_fluo;
     global β_vec = A1vec./C1vec .* (1 .-exp.(-C1vec.*δt)) .+ β_vec.*exp.(-C1vec.*δt);
+
 
     # the very same can be done in a relatively longer version
     #= for ibeta in 1:steps_crystal
