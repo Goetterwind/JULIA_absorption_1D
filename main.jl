@@ -6,8 +6,8 @@
 #@time begin
 
 #using section
-#using ProgressMeter
-#using ProgressLogging
+using ProgressMeter
+using ProgressLogging
 using DelimitedFiles
 using Plots
 using Interpolations
