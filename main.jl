@@ -52,31 +52,6 @@ plot!(spectra_flu[:,1],spectra_flu[:,2], ylims=(0,1e-20)) =#
 # here the actual code starts
 # for sure some monochromatic one at first
 
-#println("constant speed of light $c_light")
-#@showprogress 1 "Computing..."
-#scope is a bit of a pain - use let end or define as globals
-#let
-#=     #ProgreesMeter call
-    p=Progress(steps_crystal, dt=0.05, color=:grey)
-
-    a=10
-    b=20
-
-    #= @progress for i in 1:steps_crystal
-        # sleep(0.005)
-        a,b = test_function(i,steps_crystal)
-        ProgressMeter.next!(p)
-        # sleep(0.005)
-    end =#
-
-    println(a);
-    println(b);
-    
-    p,a,b = iter(p,a,b)
-    println(a);
-    println(b); =#
-#end
-
 # so do the monochromatic version first - generate a vector with zeroes for the beta-distribution
 # it is not good practice to use a matrix as an array -> initialize as an array
 β_vec = zeros(1,steps_crystal);
@@ -116,7 +91,7 @@ pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
 
 # What is still missing? We still need to itroduce the doping vector and reflectivities after each pass!
 
-@time for itime in 1:steps_time
+for itime in 1:steps_time
     # later add the pump recycling and the multipump version, for now a simple onesided, no gradient of the doping yet
     # we now have to go through the size of the I_pv in its two dimensions
     # flip the arrays using 'reverse'?
