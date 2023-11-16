@@ -112,7 +112,7 @@ for itime in 1:steps_time
                 continue
             end
             # turning this into a function does not give any advantage
-             if I_pv[ip,ir] == 1
+            if I_pv[ip,ir] == 1
                 pump_vec[cind+1,1]=pump_ret;
             elseif I_pv[ip,ir] == -1
                 pump_vec[cind+1,1]=pump_ret;
