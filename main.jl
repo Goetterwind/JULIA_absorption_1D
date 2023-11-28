@@ -101,6 +101,8 @@ for itime in 1:steps_time
     # you have to initialize the pump vector with 0's and give the first 
 
     # but this can be turned into a function call
+    # this loop might be not move through the memory efficiently, as it would be better to I(x,y) to call y and then x
+    # to crawl along the memory heap
     for ip in 1:size(I_pv,1)
         cind = size(I_pv,2)*(ip-1)+1;
         pump_vec[cind,1] = I_pump[ip];
