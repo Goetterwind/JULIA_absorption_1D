@@ -27,9 +27,12 @@ function generate_ray(args)
     # body
 end
 
-function β_int(args)
+function beta_int(s_ap::Float64, s_ep::Float64, l_p::Float64, beta_v::Matrix{Float64}, pump_v::Matrix{Float64}, dt::Float64)
     #this is a copy of the old Matlab version of the estimation of β
-
+    A1vec = s_ap.*pump_v./(h*c_0/l_p);
+    C1vec = (s_ap+s_ep).*pump_v./(h*c_0/l_p).+1/τ_fluo;
+    beta_v = A1vec./C1vec .* (1 .-exp.(-C1vec.*dt)) .+ beta_v.*exp.(-C1vec.*dt);
+    return beta_v
 end
 
 function iter(p,a,b)
@@ -63,13 +66,13 @@ function get_pump_vec(pv,bv,pdir)
     return pv, pump_ret
 end
 
-function do_pump_vec(pump_vec,β_vec)
+function do_pump_vec(pump_vec::Vector{Float64},β_vec::Vector{Float64})
     for icrys in 1:steps_crystal-1
         # in order to estimate the absorption factor, we have the classic fence problem
         # interpolate fromt the former the initial distribution the new β ;)
         # crys_d later has to be changed to a vector for the doping concentration
-        local β_inter = (β_vec[icrys] + β_vec[icrys+1])/2;
-        local pump_vec[icrys+1] = pump_vec[icrys] * exp( -(σ_ap-β_inter*(σ_ap+σ_ep))*crys_d*crys_step);
+        β_inter = (β_vec[icrys] + β_vec[icrys+1])/2;
+        pump_vec[icrys+1] = pump_vec[icrys] * exp( -(σ_ap-β_inter*(σ_ap+σ_ep))*crys_d*crys_step);
     end
     return pump_vec
 end
