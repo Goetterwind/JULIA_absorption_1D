@@ -54,8 +54,9 @@ plot!(spectra_flu[:,1],spectra_flu[:,2], ylims=(0,1e-20)) =#
 
 # so do the monochromatic version first - generate a vector with zeroes for the beta-distribution
 # it is not good practice to use a matrix as an array -> initialize as an array
-β_vec = zeros(1,steps_crystal);
+beta_vec = zeros(1,steps_crystal);
 β_inter = zeros(1,steps_crystal-1);
+
 
 # define the cross sections for now
 σ_ap = 0.7e-20; #cm^-2
@@ -109,7 +110,7 @@ pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
         for ir in 1:size(I_pv,2)
             cind = size(I_pv,2)*(ip-1)+ir;
             # make a local variable or put this whole lopp straight into a function
-            global pump_vec[cind,:], pump_ret = get_pump_vec(pump_vec[cind,:],vec(β_vec),I_pv[ip,ir])
+            global pump_vec[cind,:], pump_ret = get_pump_vec(pump_vec[cind,:],beta_vec,I_pv[ip,ir])
             if ir == size(I_pv,2)
                 continue
             end
@@ -124,6 +125,8 @@ pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
         end
     end
 
+    # here we add the pump to get the total pump as an incoherent superposition
+    # that is the DPSSL approximation
     pump_v = sum(pump_vec, dims=1);
 
     # display(plot(pump_vec[1,:]))
@@ -131,9 +134,9 @@ pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
     # now we can integrate to get the new β distribution using the differential equation, explicit solution of the diffeq
     # A1vec = σ_ap.*pump_v./(h*c_0/λ_p);
     # C1vec = (σ_ap+σ_ep).*pump_v./(h*c_0/λ_p).+1/τ_fluo;
-    # global β_vec = A1vec./C1vec .* (1 .-exp.(-C1vec.*δt)) .+ β_vec.*exp.(-C1vec.*δt);
+    # global beta_vec = A1vec./C1vec .* (1 .-exp.(-C1vec.*δt)) .+ beta_vec.*exp.(-C1vec.*δt);
 
-    global β_vec = beta_int(σ_ap, σ_ep, λ_p, β_vec, pump_v, δt); 
+    global beta_vec = beta_int(σ_ap, σ_ep, λ_p, beta_vec, pump_v, δt); 
 
 
     # the very same can be done in a relatively longer version
@@ -142,13 +145,13 @@ pump_vec = zeros(size(I_pv,1)*size(I_pv,2),steps_crystal);
         # C1 = (σ_ap+σ_ep)*pump_vec[ibeta]/(h*c_0/λ_p)+1/τ_fluo;
         A1 = A1vec[ibeta];
         C1 = C1vec[ibeta]
-        β_vec[ibeta] = A1/C1 * (1-exp(-C1*δt)) + β_vec[ibeta]*exp(-C1*δt);
+        beta_vec[ibeta] = A1/C1 * (1-exp(-C1*δt)) + beta_vec[ibeta]*exp(-C1*δt);
     end =#
 
-    # display(plot(β_vec[1,:]))
+    # display(plot(beta_vec[1,:]))
 end
 
-display(plot(β_vec[1,:],ylimits=(0, 0.5)))
+display(plot(beta_vec[1,:],ylimits=(0, 0.5)))
 
 #= fig = plot()
 for i in 1:size(pump_vec,1)

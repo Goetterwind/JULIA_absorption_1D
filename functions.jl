@@ -29,10 +29,11 @@ end
 
 function beta_int(s_ap::Float64, s_ep::Float64, l_p::Float64, beta_v::Matrix{Float64}, pump_v::Matrix{Float64}, dt::Float64)
     #this is a copy of the old Matlab version of the estimation of β
+    β=beta_v;
     A1vec = s_ap.*pump_v./(h*c_0/l_p);
     C1vec = (s_ap+s_ep).*pump_v./(h*c_0/l_p).+1/τ_fluo;
-    beta_v = A1vec./C1vec .* (1 .-exp.(-C1vec.*dt)) .+ beta_v.*exp.(-C1vec.*dt);
-    return beta_v
+    β = A1vec./C1vec .* (1 .-exp.(-C1vec.*dt)) .+ β.*exp.(-C1vec.*dt);
+    return β
 end
 
 function iter(p,a,b)
@@ -44,7 +45,7 @@ function iter(p,a,b)
     return p,a,b
 end
 
-function get_pump_vec(pv,bv,pdir)
+function get_pump_vec(pv,bv,pdir::Int64)
     if pdir == 1
         #do the pos
         pv = do_pump_vec(pv,bv);
@@ -59,14 +60,14 @@ function get_pump_vec(pv,bv,pdir)
     else
         #this is 0 case
         # do nothing and return the '0-vector'
-        pv = zeros(1,steps_crystal);
+        pv = zeros(steps_crystal);
         pump_ret = 0;
     end
     # println(pump_ret);
     return pv, pump_ret
 end
 
-function do_pump_vec(pump_vec::Vector{Float64},β_vec::Vector{Float64})
+function do_pump_vec(pump_vec,β_vec)
     for icrys in 1:steps_crystal-1
         # in order to estimate the absorption factor, we have the classic fence problem
         # interpolate fromt the former the initial distribution the new β ;)
