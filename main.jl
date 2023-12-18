@@ -22,6 +22,10 @@ include("functions.jl")
 #loading using readdlm out of DelimitedFiles
 
 #read the absorption data
+    # make this a function, that return the interpolated data!
+    # it would be really great to also get an interpolation function back (out of a 2D field to also encode the temperature!)
+    # interpolae it and then save the function using JLD2 or load it using JLD2!
+    # externalize this! This is 'julia_spectra_jk.jl'
 filename = "JK_CaF300Ka.txt"
 subpath = "original_code"
 filepath = joinpath(@__DIR__,subpath,filename)
@@ -41,7 +45,7 @@ spectra_flu = readdlm(filepath)
 
 # clear the NaNs that are potentially hidden inside the spectrum and generate the interpolation function
 spectra_flu[:,2] = replace!(spectra_flu[:,2], NaN => 0)
-spectra_flu_ip = interpolate((spectra_flu[:,1],), spectra_flu[:,2], Gridded(Linear()))
+spectra_flu_ip = interpolate((spectra_flu[:,1],), spectra_flu[:,2], Gridded(Linear())) # this is just the function that is interpolating! you need spectra_flu_ip[l_s:dl:l_e]
 
 # now make a nice plot of the spectra overlaying each other
 #= pll = plot(spectra_abs[:,1],spectra_abs[:,2], ylims=(0,1e-20))
@@ -55,7 +59,7 @@ plot!(spectra_flu[:,1],spectra_flu[:,2], ylims=(0,1e-20)) =#
 # so do the monochromatic version first - generate a vector with zeroes for the beta-distribution
 # it is not good practice to use a matrix as an array -> initialize as an array
 beta_vec = zeros(1,steps_crystal);
-β_inter = zeros(1,steps_crystal-1);
+β_inter = zeros(1,steps_crystal-1); # this does not need to exist outside at all
 
 
 # define the cross sections for now
@@ -73,10 +77,21 @@ I_pump = [10e3 10e3]; # W/cm^2
 τ_fluo =0.94e-3; # s
 
 pump_dur = 1e-3;
-δt = pump_dur / (steps_time-1);
+δt = pump_dur / (steps_time-1); # this is not correct, as pump duration is not simulation time!
 
 # how to define the brm and the multiple pumps?
 # directions are indicated by the sign [], the '0' would ignore it in case
+
+    # actually it is better to make this an array of array, so they can have different lengths
+    # https://stackoverflow.com/questions/53243831/how-to-have-multidimensional-array-with-different-length-in-julia
+    # actually all these pumps can be individual and have different spectra! there can be as nany as we want 'D' for direction
+    # D_pv[1] = [-1 1]
+    # D_pv[2] = [1 -1]
+    # add reflectivities/transmission if the factors are smaller than 1 we multiply them as 'losses'
+    # T_pv[1] = [1 1]
+    # T_pv[2] = [1 1]
+
+
 
 I_pv = [-1 1; 1 -1] #brm basically
 
