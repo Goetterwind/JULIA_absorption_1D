@@ -22,6 +22,7 @@ steps_crystal = 100
 #wavelength Array
 # λ_array = LinRange(λ_s, λ_e, 201)
 λ_array = λ_s: Δλ :λ_e
+l_array = 900: 1: 1100
 
 #include here some material constants, mainly for comparison
 

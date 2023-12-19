@@ -12,6 +12,7 @@ using DelimitedFiles
 using Plots
 using Interpolations
 using BenchmarkTools
+using JLD2
 
 
 # fundamental constants and functions
@@ -26,26 +27,34 @@ include("functions.jl")
     # it would be really great to also get an interpolation function back (out of a 2D field to also encode the temperature!)
     # interpolae it and then save the function using JLD2 or load it using JLD2!
     # externalize this! This is 'julia_spectra_jk.jl'
-filename = "JK_CaF300Ka.txt"
-subpath = "original_code"
+filename = "absorption_data_JK_lowtemp.jld2"
+subpath = "spectra"
 filepath = joinpath(@__DIR__,subpath,filename)
 
-spectra_abs = readdlm(filepath)
+data_jld = jldopen(filepath)
+s_abs = data_jld["d2D"]
+spectra_abs = s_abs(300, l_array)
+
+data_jld = Nothing # garbage collect the variable
 
 # clear the NaNs that are potentially hidden inside the spectrum and generate the interpolation function
-spectra_abs[:,2] = replace!(spectra_abs[:,2], NaN => 0)
-spectra_abs_ip = interpolate((spectra_abs[:,1],), spectra_abs[:,2], Gridded(Linear()))
+# spectra_abs[:,2] = replace!(spectra_abs[:,2], NaN => 0)
+# spectra_abs_ip = interpolate((spectra_abs[:,1],), spectra_abs[:,2], Gridded(Linear()))
 
 #read the fluorescence data
-filename = "JK_CaF300Kf.txt"
-subpath = "original_code"
+filename = "emission_data_JK_lowtemp.jld2"
+subpath = "spectra"
 filepath = joinpath(@__DIR__,subpath,filename)
 
-spectra_flu = readdlm(filepath)
+data_jld = jldopen(filepath)
+s_flu = data_jld["d2D"]
+spectra_flu = s_flu(300, l_array)
+
+data_jld = Nothing # garbage collect the variable
 
 # clear the NaNs that are potentially hidden inside the spectrum and generate the interpolation function
-spectra_flu[:,2] = replace!(spectra_flu[:,2], NaN => 0)
-spectra_flu_ip = interpolate((spectra_flu[:,1],), spectra_flu[:,2], Gridded(Linear())) # this is just the function that is interpolating! you need spectra_flu_ip[l_s:dl:l_e]
+# spectra_flu[:,2] = replace!(spectra_flu[:,2], NaN => 0)
+# spectra_flu_ip = interpolate((spectra_flu[:,1],), spectra_flu[:,2], Gridded(Linear())) # this is just the function that is interpolating! you need spectra_flu_ip[l_s:dl:l_e]
 
 # now make a nice plot of the spectra overlaying each other
 #= pll = plot(spectra_abs[:,1],spectra_abs[:,2], ylims=(0,1e-20))
